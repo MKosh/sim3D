@@ -1,12 +1,14 @@
 #include "Input.h"
 #include "../Camera/Camera.h"
 #include "../App/App.h"
+#include "imgui/imgui-SFML.h"
 
 auto ProcessEvents(App& app) -> void {
   sf::Window& window = app.GetWindow();
   sf::Event event;
   /* std::cout << "processing events\n"; */
   while (window.pollEvent(event)) {
+    /* ImGui::SFML::ProcessEvent(event); */
     if (event.type == sf::Event::KeyPressed) {
       if (event.key.scancode == sf::Keyboard::Scan::Escape) {
         app.SetOpen(false);

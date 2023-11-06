@@ -6,7 +6,10 @@
 class Box {
 public:
   Box(uint32_t width, uint32_t height, uint32_t depth)
-    : m_width{width}, m_height{height}, m_depth{depth} {}
+    : m_width{width}, m_height{height}, m_depth{depth} { SetupBox(); }
+
+  Box() { SetupBox(); }
+  auto Draw() -> void;
 
 private:
   uint32_t m_width;
@@ -18,5 +21,4 @@ private:
   std::array<float, 72> m_vertices;
 
   auto SetupBox() -> void;
-  auto Draw() -> void;
 };
