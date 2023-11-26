@@ -1,4 +1,6 @@
 #include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/System/Vector2.hpp>
+#include <cstdio>
 #include <glad/gl.h>
 
 #include <SFML/Window/Mouse.hpp>
@@ -10,9 +12,15 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <iomanip>
+#include <sstream>
+#include <string>
 
-/* #define STB_IMAGE_IMPLEMENTATION */
+#define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
+
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_opengl3.h"
 
 #include <cstdint>
 #include <iostream>
@@ -25,9 +33,6 @@
 #include "Model/Mesh.h"
 #include "Model/Box.h"
 
-/* #include "imgui/imgui.h" */
-/* #include "imgui/imgui-SFML.h" */
-
 
 const uint32_t kScreenWidth  = 800;
 const uint32_t kScreenHeight = 600;
@@ -39,21 +44,21 @@ int main () {
   settings.stencilBits = 0;
   settings.antialiasingLevel = 4;
 
-  sf::RenderWindow window(sf::VideoMode(kScreenWidth,kScreenHeight), "Simulation", sf::Style::Default, settings);
-  window.setActive(true);
+  sf::Window window(sf::VideoMode(sf::Vector2<uint32_t>(kScreenWidth,kScreenHeight)), "Simulation", sf::Style::Default, settings);
+  if(!window.setActive(true)) {
+    std::cout << "ERROR: Could not set window as active\n";
+    return -1;
+  }
   window.setVerticalSyncEnabled(false);
-  /* if (!ImGui::SFML::Init(window)) { */
-  /*   std::cout << "help\n"; */
-  /* } */
-
-  Camera camera(glm::vec3(0.0f, 0.0f, -3.0f));
-  App app{window, camera};
 
   int version = gladLoaderLoadGL();
   if (!version) {
     std::cout << "Failed to initialize GLAD\n";
     return -1;
   }
+
+  Camera camera(glm::vec3(0.0f, 0.0f, -3.0f));
+  App app{window, camera};
 
   stbi_set_flip_vertically_on_load(true);
 
@@ -63,19 +68,26 @@ int main () {
   sf::Clock clock;
   sf::Clock clock2;
 
-  Model ball_model("resources/models/ball/ball.obj");
+  /* Model ball_model("resources/models/ball/ball.obj"); */
+  Model ball_model("resources/models/sphere/sphere3.obj");
   Box box{};
   
   glad_glEnable(GL_DEPTH_TEST);
 
+  char fps[10];
+
   while (app.IsOpen()) {
 
     float dt = clock.restart().asSeconds();
-    /* std::string fps = "FPS: " + std::to_string(1.0/dt); */
-    /* app.SetDeltaTime(clock.restart().asSeconds()); */
+
+    /* float frames = 1.0f/dt; */
+    /* fps << frames; */
+    /* button->setText(std::to_string(1.0f/dt)); */
+    /* fps.str(""); */
+
+    sprintf(fps, "%6.2f", 1.0f/dt);
+    /* button->setText(fps); */
     app.SetDeltaTime(dt);
-    
-    /* app.GetWindow().setTitle(fps); */
 
     ProcessEvents(app);
     ProcessKeyboard(app);
@@ -89,11 +101,12 @@ int main () {
     glm::mat4 view = camera.GetViewMatrix();
     glm::mat4 pvm = projection * view * model;
 
-   ball_shader.Use();
+    ball_shader.Use();
 
     model = glm::mat4(1.0f);
     model = glm::translate(model, glm::vec3(0.0f, 0.0f, 1.0f));
-    model = glm::scale(model, glm::vec3(0.01, 0.01, 0.01));
+    /* model = glm::scale(model, glm::vec3(0.01, 0.01, 0.01)); */
+    model = glm::scale(model, glm::vec3(1.0, 1.0, 1.0));
     
 
     pvm = projection * view * model;
@@ -110,19 +123,20 @@ int main () {
     line_shader.Use();
     model = glm::mat4(1.0f);
     model = glm::translate(model, glm::vec3(0.0f, 0.0f, 1.0f));
-    model = glm::scale(model, glm::vec3(2.5, 1.5, 1.5));
+    /* float box_width = 2.5; */
+    model = glm::scale(model, glm::vec3(1.0, 1.0, 1.0));
     pvm = projection * view * model;
     line_shader.SetVec3f("line_color", glm::vec3(1.0, 1.0, 1.0));
     line_shader.SetMat4("pvm", pvm);
     box.Draw();
 
-    /* ImGui::SFML::Update(window, clock2.restart()); */
-    /* ImGui::SFML::Render(window); */
+    /* ImGui::Begin("settings"); */
+    /* ImGui::Button("hello"); */
+    /* ImGui::End(); */
 
     window.display();
   }
 
-  /* ImGui::SFML::Shutdown(); */
   gladLoaderUnloadGL();
   return 0;
 }

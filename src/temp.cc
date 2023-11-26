@@ -1,13 +1,22 @@
+#include <SFML/Graphics/RenderWindow.hpp>
 #include <glad/gl.h>
 
 #include <SFML/Window/Mouse.hpp>
 #include <SFML/Window/Window.hpp>
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window.hpp>
+#include <SFML/Graphics/RenderTarget.hpp>
+
+#include <TGUI/TGUI.hpp>
+#include <TGUI/Core.hpp>
+#include <TGUI/Backend/SFML-OpenGL3.hpp>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+
+/* #define STB_IMAGE_IMPLEMENTATION */
+#include "stb_image.h"
 
 #include <cstdint>
 #include <iostream>
@@ -18,85 +27,110 @@
 #include "App/App.h"
 #include "Model/Model.h"
 #include "Model/Mesh.h"
+#include "Model/Box.h"
 
-
-float vertices[] = {
-  // Positions        // Colors
-  -0.5f, -0.5f, 2.0f, 1.0f, 0.0f, 0.0f,
-   0.5f, -0.5f, 2.0f, 0.0f, 1.0f, 0.0f,
-   0.0f,  0.5f, 2.0f, 0.0f, 0.0f, 1.0f
-};
 
 const uint32_t kScreenWidth  = 800;
 const uint32_t kScreenHeight = 600;
 
 int main () {
 
-  
-  sf::Window window(sf::VideoMode(kScreenWidth,kScreenHeight), "My window");
+  sf::ContextSettings settings;
+  settings.depthBits = 24; // Need this for DEPTH_TEST
+  settings.stencilBits = 0;
+  settings.antialiasingLevel = 4;
+
+  sf::Window window(sf::VideoMode(kScreenWidth,kScreenHeight), "Simulation", sf::Style::Default, settings);
   window.setActive(true);
   window.setVerticalSyncEnabled(false);
-  Camera camera(glm::vec3(0.0f, 0.0f, -3.0f));
-  App app{window, camera};
-  
+
+  tgui::Gui gui{window};
+
+  /* Camera camera(glm::vec3(0.0f, 0.0f, -3.0f)); */
+  /* App app{window, camera}; */
+
   int version = gladLoaderLoadGL();
   if (!version) {
     std::cout << "Failed to initialize GLAD\n";
     return -1;
   }
-  glad_glEnable(GL_DEPTH_TEST);
 
-  uint32_t VBO;
-  uint32_t VAO;
+  /* stbi_set_flip_vertically_on_load(true); */
 
-  glad_glGenVertexArrays(1, &VAO);
-  glad_glGenBuffers(1, &VBO);
-  glad_glBindVertexArray(VAO);
-  glad_glBindBuffer(GL_ARRAY_BUFFER, VBO);
-  glad_glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+  /* Shader ball_shader{"resources/shaders/ball.vert", "resources/shaders/ball.frag"}; */
+  /* Shader line_shader{"resources/shaders/line.vert", "resources/shaders/line.frag"}; */
+  /**/
+  /* sf::Clock clock; */
+  /* sf::Clock clock2; */
+  /**/
+  /* Model ball_model("resources/models/ball/ball.obj"); */
+  /* Box box{}; */
+  /**/
+  /* glad_glEnable(GL_DEPTH_TEST); */
 
-  glad_glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6*sizeof(float), (void*)0);
-  glad_glEnableVertexAttribArray(0);
+  while (window.isOpen()) {
 
-  glad_glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6*sizeof(float), (void*)(3*sizeof(float)));
-  glad_glEnableVertexAttribArray(1);
+    sf::Event event;
+    window.pollEvent(event);
 
-  glad_glBindBuffer(GL_ARRAY_BUFFER, 0);
-  glad_glBindVertexArray(0);
- 
-  Shader triangle{"resources/shaders/vertex.vert", "resources/shaders/fragment.frag"};
+    while (window.pollEvent(event)) {
+      if (event.type == sf::Event::KeyPressed) {
+        if (event.key.scancode == sf::Keyboard::Scan::Escape) {
+          window.close();
+        }
+      }
+      if (event.type == sf::Event::Closed) {
+        window.close();
+      }
+    }
 
-  sf::Clock clock;
-
-/* camera.SetZoom(80.0); */
-  while (app.IsOpen()) {
-
-    /* float dt = clock.restart().asSeconds(); */
-    /* std::string fps = "FPS: " + std::to_string(1000.0/dt); */
-    /* scene.SetDeltaTime(dt); */
-    app.SetDeltaTime(clock.restart().asSeconds());
-    
-    /* scene.GetWindow().setTitle(fps); */
-    ProcessEvents(app);
-    ProcessKeyboard(app);
-    ProcessMouse(app);
-
+   /*  loat dt = clock.restart().asSeconds(); */
+   /*   std::string fps = "FPS: " + std::to_string(1.0/dt); */ 
+   /*   app.SetDeltaTime(clock.restart().asSeconds()); */ 
+   /*  app.SetDeltaTime(dt); */
+   /**/
+   /*   app.GetWindow().setTitle(fps); */
+   /**/
+   /*  ProcessEvents(app); */
+   /*  ProcessKeyboard(app); */
+   /*  ProcessMouse(app); */
+   /**/
     glad_glClearColor(0.2, 0.5, 0.8, 1.0);
     glad_glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+   /**/
+   /*  glm::mat4 model = glm::mat4(1.0f); */
+   /*  glm::mat4 projection = glm::perspective(glm::radians(camera.GetZoom()), static_cast<float>(kScreenWidth)/kScreenHeight, 0.05f, 100.0f); */
+   /*  glm::mat4 view = camera.GetViewMatrix(); */
+   /*  glm::mat4 pvm = projection * view * model; */
+   /**/
+   /* ball_shader.Use(); */
+   /**/
+   /*  model = glm::mat4(1.0f); */
+   /*  model = glm::translate(model, glm::vec3(0.0f, 0.0f, 1.0f)); */
+   /*  model = glm::scale(model, glm::vec3(0.01, 0.01, 0.01)); */
+   /**/
+   /**/
+   /*  pvm = projection * view * model; */
+   /*  ball_shader.SetMat4("pvm", pvm); */
+   /*  ball_shader.SetVec3f("i_color", glm::vec3(0.75f, 0.3f, 0.3f)); */
+   /*   float time = clock2.getElapsedTime().asSeconds(); */ 
+   /*   ball_shader.SetVec3f("light_pos", glm::vec3(cos(time), 2.0f, sin(time))); */
+   /*  all_shader.SetVec3f("light_pos", glm::vec3(0.0f, 2.0f, 1.0f)); */
+   /**/
+   /*  glad_glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); */
+   /*  ball_model.Draw(ball_shader); */
+   /**/
+   /*  // Draw line */
+   /*  line_shader.Use(); */
+   /*  model = glm::mat4(1.0f); */
+   /*  model = glm::translate(model, glm::vec3(0.0f, 0.0f, 1.0f)); */
+   /*  model = glm::scale(model, glm::vec3(2.5, 1.5, 1.5)); */
+   /*  pvm = projection * view * model; */
+   /*  line_shader.SetVec3f("line_color", glm::vec3(1.0, 1.0, 1.0)); */
+   /*  line_shader.SetMat4("pvm", pvm); */
+   /*  box.Draw(); */
 
-    triangle.Use();
-
-    glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
-    
-    glm::mat4 projection = glm::perspective(glm::radians(camera.GetZoom()), static_cast<float>(kScreenWidth)/kScreenHeight, 0.05f, 100.0f);
-    glm::mat4 view = camera.GetViewMatrix();
-
-    glm::mat4 pvm = projection * view * model;
-    triangle.SetMat4("pvm", pvm);
-
-    glad_glBindVertexArray(VAO);
-    glad_glDrawArrays(GL_TRIANGLES, 0, 3);
+    /* gui.draw(); */
 
     window.display();
   }
@@ -104,6 +138,3 @@ int main () {
   gladLoaderUnloadGL();
   return 0;
 }
-
-
-

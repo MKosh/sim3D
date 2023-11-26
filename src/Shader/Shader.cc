@@ -33,7 +33,7 @@ Shader::Shader(const std::string& vertex_path, const std::string& fragment_path)
     vertex_code = v_shader_stream.str();
     fragment_code = f_shader_stream.str();
   } catch (std::ifstream::failure e) {
-    std::cout << "Error::Shader -- File not successfully read" << std::endl;
+    std::cout << "Error::Shader -- File "<< vertex_path << " or " << fragment_path << " not successfully read" << std::endl;
   }
   const char* v_shader_code = vertex_code.c_str();
   const char* f_shader_code = fragment_code.c_str();
@@ -49,7 +49,7 @@ Shader::Shader(const std::string& vertex_path, const std::string& fragment_path)
   glad_glGetShaderiv(vertex, GL_COMPILE_STATUS, &success);
   if (!success) {
     glad_glGetShaderInfoLog(vertex, 512, nullptr, infoLog);
-    std::cout << "Error::Shader -- vertex compilation failed\n" << infoLog << std::endl;
+    std::cout << "Error::Shader -- vertex compilation failed for file: "<< vertex_path << "\n" << infoLog << std::endl;
   }
 
 
@@ -59,7 +59,7 @@ Shader::Shader(const std::string& vertex_path, const std::string& fragment_path)
   glad_glGetShaderiv(fragment, GL_COMPILE_STATUS, &success);
   if (!success) {
     glad_glGetShaderInfoLog(fragment, 512, nullptr, infoLog);
-    std::cout << "Error::Shader -- fragment compilation failed\n" << infoLog << std::endl;
+    std::cout << "Error::Shader -- fragment compilation failed for file: "<< fragment_path <<"\n" << infoLog << std::endl;
   }
 
   // Create the shader program and link the shaders

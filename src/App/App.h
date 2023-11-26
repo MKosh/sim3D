@@ -1,8 +1,27 @@
 #pragma once
 
 #include <SFML/Window.hpp>
+/* #include <GLFW/glfw3.h> */
+/* #include <string> */
 
 #include "../Camera/Camera.h"
+
+/* namespace sim3D { */
+/**/
+/* class Window { */
+/* public: */
+/*   Window(int w, int h, std::string name); */
+/*   ~Window(); */
+/* private: */
+/*   GLFWwindow* m_window; */
+/*   const int m_width; */
+/*   const int m_height; */
+/*   std::string m_name; */
+/**/
+/*   auto InitWindow() -> void; */
+/* }; */
+/**/
+/* } */
 
 class App {
 public:
