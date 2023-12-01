@@ -1,4 +1,5 @@
 #include "Model.h"
+#include <glad/gl.h>
 #include "Shader/Shader.h"
 #include "stb_image.h"
 #include <assimp/material.h>

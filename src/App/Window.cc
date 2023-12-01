@@ -11,7 +11,6 @@ Window::Window(int w, int h, std::string name)
 
 Window::~Window() {
   glfwDestroyWindow(m_window);
-  glfwTerminate();
 }
 
 auto Window::InitWindow() -> void {

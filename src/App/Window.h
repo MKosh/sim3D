@@ -12,7 +12,8 @@ public:
   auto IsOpen() -> bool { return m_window_is_open; }
   auto SetOpen(bool status) -> void { m_window_is_open = status; }
   auto Close() -> void {}
-  auto ShouldClose() -> bool { return glfwWindowShouldClose(m_window); }
+  auto ShouldClose() -> void { glfwSetWindowShouldClose(m_window,m_window_is_open); }
+  auto GetWindow() -> GLFWwindow* { return m_window; }
 private:
   GLFWwindow* m_window;
   const int m_width;
