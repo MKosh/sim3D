@@ -42,8 +42,28 @@ auto Camera::ProcessMovement(CameraMovement direction, float delta_time) -> void
 }
 
 /* auto Camera::ProcessMouseMovement(float x_offset, float y_offset, GLboolean constrain_pitch) -> void { */
-auto Camera::ProcessMouseMovement(sim3D::Vec2<int> new_pos, bool constrain_pitch) -> void {
+auto Camera::ProcessMouseMovement(sim3D::Vec2<float> new_pos, bool constrain_pitch) -> void {
+  /* sim3D::Vec2<float> pos(new_pos.x, new_pos.y); */
   m_current_mouse = new_pos;
+  float x_offset = (m_current_mouse.x - m_last_mouse.x) * m_mouse_sens;
+  float y_offset = (m_current_mouse.y - m_last_mouse.y) * m_mouse_sens;
+  m_yaw += x_offset;
+  m_pitch += y_offset;
+
+  if (constrain_pitch) {
+    if (m_pitch > 89.0f)
+      m_pitch = 89.0f;
+    if (m_pitch < -89.0f)
+      m_pitch = -89.0f;
+  }
+
+  m_last_mouse = m_current_mouse;
+  UpdateCameraVectors();
+}
+
+auto Camera::ProcessMouseMovement(float x, float y, bool constrain_pitch) -> void {
+  /* std::cout << "(x, y) = (" << x << ", " << y << ")\n";  */
+  m_current_mouse = {x, y};
   float x_offset = (m_current_mouse.x - m_last_mouse.x) * m_mouse_sens;
   float y_offset = (m_current_mouse.y - m_last_mouse.y) * m_mouse_sens;
   m_yaw += x_offset;
@@ -81,7 +101,7 @@ auto Camera::UpdateCameraVectors() -> void {
 }
 
 auto Camera::ResetCamera() -> void {
-  m_position = glm::vec3{0.0f, 0.0f, -1.0f};
+  m_position = glm::vec3{0.0f, 0.0f, -3.0f};
   m_yaw = -90.0f;
   m_pitch = 0.0f;
 

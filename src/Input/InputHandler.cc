@@ -1,101 +1,118 @@
+#include <glad/gl.h>
+#include <GLFW/glfw3.h>
 #include "InputHandler.h"
 #include "../Camera/Camera.h"
-/* #include "../App/App.h" */
-#include <GL/gl.h>
-#include <GLFW/glfw3.h>
-
-/* auto ProcessEvents(App& app) -> void { */
-/*   sf::Window& window = app.GetWindow(); */
-/*   sf::Event event; */
-/*   std::cout << "processing events\n"; */
-/*   while (window.pollEvent(event)) { */
-/*     if (event.type == sf::Event::KeyPressed) { */
-/*       if (event.key.scancode == sf::Keyboard::Scan::Escape) { */
-/*         app.SetOpen(false); */
-/*       } */
-/*       if (event.key.scancode == sf::Keyboard::Scan::R) { */
-/*         app.GetCamera().ResetCamera(); */
-/*       } */
-/*       if (event.key.scancode == sf::Keyboard::Scan::Space) { */
-/*         app.TogglePhysics(); */
-/*       } */
-/*     } */
-/*     if (event.type == sf::Event::Closed) { */
-/*         app.SetOpen(false); */
-/*     } */
-/*     if (event.type == sf::Event::Resized) { */
-/*       glad_glViewport(0, 0, event.size.width, event.size.height); */
-/*     } */
-/*     if (event.type == sf::Event::MouseWheelScrolled) { */
-/*       app.GetCamera().ProcessMouseScroll(event.mouseWheelScroll.delta); */
-/*     } */
-/*     if (event.type == sf::Event::MouseButtonPressed) { */
-/*       if (event.mouseButton.button == sf::Mouse::Button::Right) { */
-/*         app.GetCamera().SetMousePos(sf::Mouse::getPosition(window)); */
-/*         app.SetCameraMoving(true); */
-/*       } */
-/*     } */
-/*     if (event.type == sf::Event::MouseButtonReleased) { */
-/*       if (event.mouseButton.button == sf::Mouse::Button::Right) { */
-/*         app.SetCameraMoving(false); */
-/*       } */
-/*     } */
-/*   } */
-/* } */
-
-/* auto ProcessKeyboard(App& app) -> void { */
-/*   if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::W)) { */
-/*     app.GetCamera().ProcessMovement(CameraMovement::kForward, app.GetDeltaTime()); */
-/*   } */
-/*   if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::S)) { */
-/*     app.GetCamera().ProcessMovement(CameraMovement::kBackward, app.GetDeltaTime()); */
-/*   } */
-/*   if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::A)) { */
-/*     app.GetCamera().ProcessMovement(CameraMovement::kLeft, app.GetDeltaTime()); */
-/*   } */
-/*   if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::D)) { */
-/*     app.GetCamera().ProcessMovement(CameraMovement::kRight, app.GetDeltaTime()); */
-/*   } */
-/*   if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::Up)) { */
-/*     app.GetCamera().ProcessMovement(CameraMovement::kUp, app.GetDeltaTime()); */
-/*   } */
-/*   if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scan::Down)) { */
-/*     app.GetCamera().ProcessMovement(CameraMovement::kDown, app.GetDeltaTime()); */
-/*   } */
-/* } */
-/**/
-/* auto ProcessMouse(App& app) -> void { */
-/*   if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Right) && app.IsCameraMoving() == true) { */
-/*     app.GetCamera().ProcessMouseMovement(sf::Mouse::getPosition(app.GetWindow())); */
-/*   } */
-/* } */
+#include "../App/App.h"
 
 namespace sim3D {
-InputHandler::InputHandler(GLFWwindow* window)
-  : m_window(window) {
+InputHandler::InputHandler(sim3D::App* app)
+  : m_app(app), m_camera(m_app->Camera()), m_window(m_app->Window()) {
   glfwSetFramebufferSizeCallback(m_window, FramebufferSizeCallback);
   glfwSetMouseButtonCallback(m_window, MouseButtonCallback);
   glfwSetKeyCallback(m_window, KeyCallback);
+  glfwSetCursorEnterCallback(m_window, CursorEnterCallback);
+  glfwSetScrollCallback(m_window, MouseScrollCallback);
+}
 
+auto InputHandler::ProcessKeyboard() -> void {
+  float dt = m_app->GetDeltaTime();
+  if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS) {
+    m_camera.ProcessMovement(CameraMovement::kForward, dt);
+  } else if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_RELEASE) {
+    m_camera.ProcessMovement(CameraMovement::kForward, 0.0);
+  }
+  if (glfwGetKey(m_window, GLFW_KEY_S) == GLFW_PRESS) {
+    m_camera.ProcessMovement(CameraMovement::kBackward, dt);
+  } else if (glfwGetKey(m_window, GLFW_KEY_S) == GLFW_RELEASE) {
+    m_camera.ProcessMovement(CameraMovement::kBackward, 0.0);
+  }
+  if (glfwGetKey(m_window, GLFW_KEY_A) == GLFW_PRESS) {
+    m_camera.ProcessMovement(CameraMovement::kLeft, dt);
+  } else if (glfwGetKey(m_window, GLFW_KEY_A) == GLFW_RELEASE) {
+    m_camera.ProcessMovement(CameraMovement::kLeft, 0.0);
+  }
+  if (glfwGetKey(m_window, GLFW_KEY_D) == GLFW_PRESS) {
+    m_camera.ProcessMovement(CameraMovement::kRight, dt);
+  } else if (glfwGetKey(m_window, GLFW_KEY_D) == GLFW_RELEASE) {
+    m_camera.ProcessMovement(CameraMovement::kRight, 0.0);
+  }
+  if (glfwGetKey(m_window, GLFW_KEY_UP) == GLFW_PRESS) {
+    m_camera.ProcessMovement(CameraMovement::kUp, dt);
+  } else if (glfwGetKey(m_window, GLFW_KEY_UP) == GLFW_RELEASE) {
+    m_camera.ProcessMovement(CameraMovement::kUp, 0.0);
+  }
+  if (glfwGetKey(m_window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+    m_camera.ProcessMovement(CameraMovement::kDown, dt);
+  } else if (glfwGetKey(m_window, GLFW_KEY_DOWN) == GLFW_RELEASE) {
+    m_camera.ProcessMovement(CameraMovement::kDown, 0.0);
+  }
+}
+
+auto InputHandler::ProcessMouse() -> void {
+  if (glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS
+    && m_app->IsCameraMoving()) {
+    double x_pos, y_pos;
+    glfwGetCursorPos(m_window, &x_pos, &y_pos);
+    m_camera.ProcessMouseMovement(x_pos, y_pos);
+  } else if (glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_RELEASE) {
+  }
 }
 
 auto KeyCallback(GLFWwindow* window, int key, [[maybe_unused]] int scancode, int action, [[maybe_unused]] int mode) -> void {
   if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
     glfwSetWindowShouldClose(window, GL_TRUE);
   }
+  if (key == GLFW_KEY_R && action == GLFW_PRESS) {
+    App::GetInstance()->Camera().ResetCamera();
+  }
+  if (key == GLFW_KEY_I && action == GLFW_PRESS) {
+
+  }
 }
 
 auto MouseButtonCallback(GLFWwindow* window, int button, int action, int mods) -> void {
   if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS) {
     /* SetCameraMoving(true); */
+    App::GetInstance()->SetCameraMoving(true);
+    double x, y;
+    glfwGetCursorPos(App::GetInstance()->Window(), &x, &y);
+    sim3D::Vec2<float> pos;
+    pos.x = (float)x;
+    pos.y = (float)y;
+    App::GetInstance()->Camera().SetMousePos(pos);
+    /* glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL); */
   }
   if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE) {
     // SetCameraMoving(false);
+    App::GetInstance()->SetCameraMoving(false);
+    /* glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED); */
   }
 }
 
 auto FramebufferSizeCallback(GLFWwindow* window, int width, int height) -> void {
   glViewport(0, 0, width, height);
 }
+
+auto CursorEnterCallback(GLFWwindow* window, int entered) -> void {
+  if (!entered) {
+    App::GetInstance()->SetCameraMoving(false);
+  }
+}
+
+auto MouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset) -> void {
+  App::GetInstance()->Camera().ProcessMouseScroll((float)yoffset);
+}
+
+/* auto Interactivecallback(GLFWwindow* window, int key, int scancode, int action, int mods) -> void { */
+/*   if (key == GLFW_KEY_I && action == GLFW_PRESS) { */
+/*     if (interactive == true) { */
+/*       interactive = false; */
+/*       glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL); */
+/*     } else { */
+/*       interactive = true; */
+/*       glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED); */
+/*     } */
+/*   } */
+/* } */
 
 }

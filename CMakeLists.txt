@@ -24,19 +24,23 @@ target_include_directories(simulation PUBLIC external/include/ external assimp-5
 
 add_subdirectory(external)
 
+add_library(imgui STATIC external/imgui/imgui.cpp external/imgui/imgui_draw.cpp external/imgui/imgui_tables.cpp external/imgui/imgui_widgets.cpp external/imgui/imgui_impl_opengl3.cpp external/imgui/imgui_impl_glfw.cpp external/imgui/imgui_demo.cpp)
+target_include_directories(imgui PUBLIC external/imgui external/include)
+# target_link_libraries(imgui PRIVATE sfml-system sfml-window graphics glad dl GL udev)
+target_link_libraries(imgui PRIVATE glfw glad dl GL udev)
+# message(STATUS ${CMAKE_HOME_DIRECTORY})
+
+add_library(core STATIC src/App/Entity.cc src/App/Component.cc)
+target_include_directories(core PUBLIC src external)
+
 add_library(graphics STATIC src/Camera/Camera.cc src/Input/InputHandler.cc src/App/App.cc src/App/Window.cc src/Shader/Shader.cc src/Model/Mesh.cc src/Model/Model.cc src/Model/Box.cc) # external/imgui/imgui.cpp external/imgui/imgui-SFML.cpp external/imgui/imgui.cpp external/imgui/imgui_draw.cpp external/imgui/imgui_tables.cpp external/imgui/imgui_widgets.cpp external/imgui/imgui_demo.cpp)
 target_include_directories(graphics PUBLIC external/include ${SFML_INCLUDE_DIRS} src external)
 # target_link_libraries(graphics PRIVATE sfml-system sfml-window sfml-graphics udev) # TGUI::TGUI)
-target_link_libraries(graphics PRIVATE glfw)
+target_link_libraries(graphics PRIVATE glfw imgui core)
 # message(STATUS ${SFML_INCLUDE_DIRS})
 
-add_library(imgui STATIC external/imgui/imgui.cpp external/imgui/imgui_draw.cpp external/imgui/imgui_tables.cpp external/imgui/imgui_widgets.cpp external/imgui/imgui_impl_opengl3.cpp)
-target_include_directories(imgui PUBLIC external/imgui external/include)
-# target_link_libraries(imgui PRIVATE sfml-system sfml-window graphics glad dl GL udev)
-target_link_libraries(imgui PRIVATE graphics glfw glad dl GL udev)
-# message(STATUS ${CMAKE_HOME_DIRECTORY})
 
-target_link_libraries(simulation PRIVATE glfw dl assimp imgui glad graphics udev) # TGUI::TGUI)
+target_link_libraries(simulation PRIVATE glfw dl assimp imgui glad graphics core udev) # TGUI::TGUI)
 
 set(DEBUG_OPTIONS "-Wall;-Wextra;-Wpedantic;-Werror;-g")
 set(RELEASE_OPTIONS "-Wall;-Wextra;-Wpedantic;-O3")

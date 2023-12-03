@@ -10,6 +10,7 @@
 
 namespace sim3D {
 
+
 class App {
 protected:
   App() {};
@@ -20,20 +21,24 @@ public:
 
   auto run() -> void;
   auto SetCameraMoving(bool status) -> void { m_camera_moving = status; }
-  auto GetDeltaTime() -> float { return m_current_time - m_last_time; }
+  auto GetDeltaTime() -> float { return m_dt; }
   auto Shutdown() -> void;
   auto Window() -> GLFWwindow* { return m_window.GetWindow(); }
+  auto GetWindow() -> sim3D::Window& {return m_window; }
+  auto Camera() -> sim3D::Camera& { return m_camera; }
   auto IsCameraMoving() -> bool { return m_camera_moving; }
+  auto InitGLAD() -> void;
+  auto SetDeltaTime() -> void;
   auto operator=(const App&) = delete;
   static App* GetInstance();
 private:
 
   sim3D::Window m_window{kWidth, kHeight, "Simulation"};
   sim3D::Camera m_camera{glm::vec3(0.0f, 0.0f, -3.0f)};
-  sim3D::InputHandler m_input_handler{m_window.GetWindow()};
   bool m_camera_moving = false;
   float m_current_time;
-  float m_last_time;
+  float m_last_time = 0.0f;
+  float m_dt;
 };
 
 }
