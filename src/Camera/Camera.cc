@@ -1,9 +1,7 @@
 #include "Camera.h"
-
+#include <SFML/System/Vector2.hpp>
 #include <iostream>
 #include <glm/ext/quaternion_geometric.hpp>
-
-namespace sim3D {
 
 Camera::Camera(glm::vec3 position, glm::vec3 up, float yaw, float pitch)
     :m_position{position}, m_front{glm::vec3{0.0f, 0.0f, -1.0f}}, m_world_up{up}, m_yaw{yaw}, m_pitch{pitch}, m_movement_speed{kSpeed}, m_mouse_sens{kSensitivity}, m_zoom{kZoom} {
@@ -42,7 +40,7 @@ auto Camera::ProcessMovement(CameraMovement direction, float delta_time) -> void
 }
 
 /* auto Camera::ProcessMouseMovement(float x_offset, float y_offset, GLboolean constrain_pitch) -> void { */
-auto Camera::ProcessMouseMovement(sim3D::Vec2<int> new_pos, bool constrain_pitch) -> void {
+auto Camera::ProcessMouseMovement(sf::Vector2i new_pos, GLboolean constrain_pitch) -> void {
   m_current_mouse = new_pos;
   float x_offset = (m_current_mouse.x - m_last_mouse.x) * m_mouse_sens;
   float y_offset = (m_current_mouse.y - m_last_mouse.y) * m_mouse_sens;
@@ -86,5 +84,4 @@ auto Camera::ResetCamera() -> void {
   m_pitch = 0.0f;
 
   UpdateCameraVectors();
-}
 }

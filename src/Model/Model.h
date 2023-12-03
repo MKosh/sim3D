@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Shader/Shader.h"
+/* #include "stb_image.h" */
 #include "Mesh.h"
 
 #include <vector>

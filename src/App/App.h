@@ -1,39 +1,46 @@
 #pragma once
 
-#include <glad/gl.h>
-#include "Window.h"
+#include <SFML/Window.hpp>
+/* #include <GLFW/glfw3.h> */
+/* #include <string> */
+
 #include "../Camera/Camera.h"
-#include "../Input/InputHandler.h"
-#include <glm/glm.hpp>
-#include <vector>
 
-
-namespace sim3D {
+/* namespace sim3D { */
+/**/
+/* class Window { */
+/* public: */
+/*   Window(int w, int h, std::string name); */
+/*   ~Window(); */
+/* private: */
+/*   GLFWwindow* m_window; */
+/*   const int m_width; */
+/*   const int m_height; */
+/*   std::string m_name; */
+/**/
+/*   auto InitWindow() -> void; */
+/* }; */
+/**/
+/* } */
 
 class App {
-protected:
-  App() {};
-  static App* app;
 public:
-  static constexpr int kWidth = 800;
-  static constexpr int kHeight = 600;
-
-  auto run() -> void;
-  auto SetCameraMoving(bool status) -> void { m_camera_moving = status; }
-  auto GetDeltaTime() -> float { return m_current_time - m_last_time; }
-  auto Shutdown() -> void;
-  auto Window() -> GLFWwindow* { return m_window.GetWindow(); }
+  App(sf::Window& window, Camera& camera) : m_window(window), m_camera(camera) {}
+  auto GetWindow() -> sf::Window& { return m_window; }
+  auto GetCamera() -> Camera&     { return m_camera; }
+  auto IsOpen() -> bool { return m_window_open; }
+  auto SetOpen(bool open) -> void { m_window_open = open; }
+  auto GetDeltaTime() -> float { return m_delta_time; }
+  auto SetDeltaTime(float dt) -> void { m_delta_time = dt; }
   auto IsCameraMoving() -> bool { return m_camera_moving; }
-  auto operator=(const App&) = delete;
-  static App* GetInstance();
+  auto SetCameraMoving(bool move) -> void { m_camera_moving = move; }
+  auto TogglePhysics() -> void;
+
 private:
-
-  sim3D::Window m_window{kWidth, kHeight, "Simulation"};
-  sim3D::Camera m_camera{glm::vec3(0.0f, 0.0f, -3.0f)};
-  sim3D::InputHandler m_input_handler{m_window.GetWindow()};
+  sf::Window& m_window;
+  Camera& m_camera;
+  bool m_window_open = true;
   bool m_camera_moving = false;
-  float m_current_time;
-  float m_last_time;
+  bool m_physics_active = false;
+  float m_delta_time;
 };
-
-}
