@@ -6,10 +6,10 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <iomanip>
-#include <sstream>
-#include <string>
-#include <cstdio>
+// #include <iomanip>
+// #include <sstream>
+// #include <string>
+// #include <cstdio>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -17,7 +17,7 @@
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_opengl3.h"
 
-#include <cstdint>
+// #include <cstdint>
 #include <iostream>
 
 #include "Camera/Camera.h"

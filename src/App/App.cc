@@ -8,9 +8,6 @@
 #include "Model/Mesh.h"
 #include "Model/Box.h"
 
-#include "imgui/imgui.h"
-#include "imgui/imgui_impl_glfw.h"
-#include "imgui/imgui_impl_opengl3.h"
 
 #include <GLFW/glfw3.h>
 #include <iostream>
@@ -41,14 +38,12 @@ auto App::SetDeltaTime() -> void {
   m_last_time = m_current_time;
 }
 
-void App::run() {
-
-  InitGLAD();
+auto App::run() -> void {
 
   ImGui::CreateContext();
 
   InputHandler input{app};
-  
+
   ImGui_ImplGlfw_InitForOpenGL(app->Window(), true);
   ImGui_ImplOpenGL3_Init();
 
@@ -62,11 +57,12 @@ void App::run() {
   float box_height = 1.0f;
   float box_depth = 1.0f;
   float ball_radius = 0.5f;
+
   while (!glfwWindowShouldClose(m_window.GetWindow())) {
 
     SetDeltaTime();
  
-    glfwPollEvents(); 
+    glfwPollEvents();
     input.ProcessKeyboard();
     input.ProcessMouse();
 
@@ -90,16 +86,15 @@ void App::run() {
     model = glm::mat4(1.0f);
     model = glm::translate(model, glm::vec3(0.0f, 0.0f, 1.0f));
     model = glm::scale(model, glm::vec3(ball_radius, ball_radius, ball_radius));
-    
 
     pvm = projection * view * model;
     ball_shader.SetMat4("pvm", pvm);
     ball_shader.SetVec3f("i_color", glm::vec3(0.75f, 0.3f, 0.3f));
     ball_shader.SetVec3f("light_pos", glm::vec3(0.0f, 10.0f, -1.0f));
-      
+
     glad_glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     ball_model.Draw(ball_shader);
-      
+
     // Draw line */
     line_shader.Use();
     model = glm::mat4(1.0f);

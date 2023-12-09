@@ -7,13 +7,18 @@
 #include <glm/glm.hpp>
 #include <vector>
 
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_glfw.h"
+#include "imgui/imgui_impl_opengl3.h"
 
 namespace sim3D {
 
 
 class App {
 protected:
-  App() {};
+  App() {
+    InitGLAD();
+  };
   static App* app;
 public:
   static constexpr int kWidth = 800;

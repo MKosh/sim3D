@@ -103,16 +103,4 @@ auto MouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset) -> 
   App::GetInstance()->Camera().ProcessMouseScroll((float)yoffset);
 }
 
-/* auto Interactivecallback(GLFWwindow* window, int key, int scancode, int action, int mods) -> void { */
-/*   if (key == GLFW_KEY_I && action == GLFW_PRESS) { */
-/*     if (interactive == true) { */
-/*       interactive = false; */
-/*       glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL); */
-/*     } else { */
-/*       interactive = true; */
-/*       glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED); */
-/*     } */
-/*   } */
-/* } */
-
 }

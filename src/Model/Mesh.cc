@@ -1,10 +1,10 @@
 #include "Mesh.h"
 #include <glad/gl.h>
-#include <cstdint>
+// #include <sys/types.h>
 
 
-Mesh::Mesh(std::vector<Vertex>vertices, std::vector<uint32_t> indicies, std::vector<Texture> textures) :
-           m_vertices{vertices}, m_indicies{indicies}, m_textures{textures} {
+Mesh::Mesh(std::vector<Vertex>vertices, std::vector<uint32_t> indicies, std::vector<Texture> textures, uint32_t instances = 1) :
+           m_vertices{vertices}, m_indicies{indicies}, m_textures{textures}, m_instances{instances} {
   SetupMesh();
 }
 
@@ -67,3 +67,35 @@ auto Mesh::Draw(Shader& shader) -> void {
   
   glad_glActiveTexture(GL_TEXTURE0);
 }
+
+// auto Mesh::DrawInstanced(Shader& shader) -> void {
+//   uint32_t diffuseNr = 1;
+//   uint32_t specularNr = 1;
+//   uint32_t normalNr = 1;
+//   uint32_t heightNr = 1;
+//     /* aiColor3D color(0.0f, 0.0f, 0.0f); */
+//     /* material->Get(AI_MATKEY_COLOR_DIFFUSE, color); */
+//   for (uint32_t i = 0; i < m_textures.size(); ++i) {
+//     glad_glActiveTexture(GL_TEXTURE0 + i);
+//     std::string number;
+//     std::string name = m_textures[i].type;
+//     if (name == "texture_diffuse")
+//       number = std::to_string(diffuseNr++);
+//     else if (name == "texture_specular")
+//       number = std::to_string(specularNr++);
+//     else if (name == "texture_normal")
+//       number = std::to_string(normalNr++);
+//     else if (name == "texture_height")
+//       number = std::to_string(heightNr++);
+//
+//     shader.SetInt((name + number).c_str(), i);
+//     glad_glBindTexture(GL_TEXTURE_2D, m_textures[i].id);
+//   }
+//
+//   // Draw mesh
+//   glad_glBindVertexArray(m_vao);
+//   glad_glDrawElements(GL_TRIANGLES, static_cast<uint32_t>(m_indicies.size()), GL_UNSIGNED_INT, 0);
+//   glad_glBindVertexArray(0);
+//
+//   glad_glActiveTexture(GL_TEXTURE0);
+// }
