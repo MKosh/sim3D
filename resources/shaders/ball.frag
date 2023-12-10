@@ -19,11 +19,11 @@ void main() {
 
 
   vec3 result = (ambient + diffuse) * i_color;
-  if (gl_FragCoord.x < 400) {
-      FragColor = vec4(i_color, 1.0);
-  } else {
-      FragColor = vec4(result, 1.0);
-  }
-  // FragColor = vec4(result, 1.0);
+  //if (gl_FragCoord.x < 400) {
+  //    FragColor = vec4(i_color, 1.0);
+  //} else {
+  //    FragColor = vec4(result, 1.0);
+  //}
+  FragColor = vec4(result, 1.0);
   //FragColor = texture(texture_diffuse1, Tex_Coord);
 }

@@ -1,5 +1,4 @@
 #include <cstdint>
-/* #include <glad/gl.h> */
 #include <array>
 #include <glm/glm.hpp>
 

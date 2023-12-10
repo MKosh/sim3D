@@ -1,4 +1,5 @@
 #include "App.h"
+#include <array>
 #include <glm/ext/matrix_clip_space.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -8,10 +9,11 @@
 #include "Model/Mesh.h"
 #include "Model/Box.h"
 
-
 #include <GLFW/glfw3.h>
+
 #include <iostream>
 #include <stdexcept>
+#include <vector>
 
 
 namespace sim3D {
@@ -47,6 +49,7 @@ auto App::run() -> void {
   ImGui_ImplGlfw_InitForOpenGL(app->Window(), true);
   ImGui_ImplOpenGL3_Init();
 
+  // glGetError();
   glad_glEnable(GL_DEPTH_TEST);
   Shader ball_shader{"resources/shaders/ball.vert", "resources/shaders/ball.frag"};
   Shader line_shader{"resources/shaders/line.vert", "resources/shaders/line.frag"};
@@ -71,7 +74,7 @@ auto App::run() -> void {
     ImGui::NewFrame();
 
 
-    /* std::cout << "FPS: " << 1.0/GetDeltaTime() << '\n'; */
+    float fps = 1.0/GetDeltaTime();
 
     glad_glClearColor(0.2, 0.5, 0.8, 1.0);
     glad_glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -92,7 +95,7 @@ auto App::run() -> void {
     ball_shader.SetVec3f("i_color", glm::vec3(0.75f, 0.3f, 0.3f));
     ball_shader.SetVec3f("light_pos", glm::vec3(0.0f, 10.0f, -1.0f));
 
-    glad_glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    // glad_glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     ball_model.Draw(ball_shader);
 
     // Draw line */
@@ -105,6 +108,7 @@ auto App::run() -> void {
     line_shader.SetMat4("pvm", pvm);
     box.Draw();
 
+    ImGui::Text("FPS: %f", fps);
     ImGui::Begin("Box Controls");
     ImGui::SliderFloat("x", &box_width, 0.01f, 10.0f);
     ImGui::SliderFloat("y", &box_height, 0.01f, 10.0f);

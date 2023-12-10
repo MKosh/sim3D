@@ -1,3 +1,4 @@
+#define GLFW_INCLUDE_NONE
 #include <cstdlib>
 #include <exception>
 #include <glad/gl.h>

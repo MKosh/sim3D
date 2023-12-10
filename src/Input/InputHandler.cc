@@ -1,8 +1,8 @@
 #include <glad/gl.h>
-#include <GLFW/glfw3.h>
 #include "InputHandler.h"
 #include "../Camera/Camera.h"
 #include "../App/App.h"
+#include <GLFW/glfw3.h>
 
 namespace sim3D {
 InputHandler::InputHandler(sim3D::App* app)
