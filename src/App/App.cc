@@ -8,6 +8,7 @@
 #include "Model/Model.h"
 #include "Model/Mesh.h"
 #include "Model/Box.h"
+#include "Shader/VertexBuffer.h"
 
 #include <GLFW/glfw3.h>
 
@@ -61,8 +62,30 @@ auto App::run() -> void {
   float box_depth = 1.0f;
   float ball_radius = 0.5f;
 
-  while (!glfwWindowShouldClose(m_window.GetWindow())) {
+  std::vector<glm::mat4> ball_models{glm::mat4(1.0f), glm::mat4(1.0f), glm::mat4(1.0f)};
+  /* glm::mat4 inst_model = glm::mat4(1.0f); */
+  ball_models[0] = glm::translate(ball_models[0], glm::vec3(0.0f, 0.0f, 1.0f));
+  ball_models[1] = glm::translate(ball_models[1], glm::vec3(1.0f, 0.0f, 1.0f));
+  ball_models[2] = glm::translate(ball_models[2], glm::vec3(-1.0f, 1.0f, 1.0f));
+  ball_model.SetInstances(3);
 
+
+  /* ball_model.BindVAO(); */
+  VertexBuffer positions;
+  positions.SetData(ball_models, sizeof(glm::mat4));
+
+  VertexBufferLayout instance_layout;
+  instance_layout.Push<float>(4);
+  instance_layout.Push<float>(4);
+  instance_layout.Push<float>(4);
+  instance_layout.Push<float>(4);
+  ball_model.AddProperty(positions, instance_layout, 3);
+  ball_model.SetPropertyDivisor(3, 1);
+  ball_model.SetPropertyDivisor(4, 1);
+  ball_model.SetPropertyDivisor(5, 1);
+  ball_model.SetPropertyDivisor(6, 1);
+
+  while (!glfwWindowShouldClose(m_window.GetWindow())) {
     SetDeltaTime();
  
     glfwPollEvents();
@@ -89,14 +112,15 @@ auto App::run() -> void {
     model = glm::mat4(1.0f);
     model = glm::translate(model, glm::vec3(0.0f, 0.0f, 1.0f));
     model = glm::scale(model, glm::vec3(ball_radius, ball_radius, ball_radius));
+    /* for (size_t i = 0; i < 2; ++i) { */
+      pvm = projection * view; // * ball_models[i];
+      ball_shader.SetMat4("pvm", pvm);
+      ball_shader.SetVec3f("i_color", glm::vec3(0.75f, 0.3f, 0.3f));
+      ball_shader.SetVec3f("light_pos", glm::vec3(0.0f, 10.0f, -1.0f));
 
-    pvm = projection * view * model;
-    ball_shader.SetMat4("pvm", pvm);
-    ball_shader.SetVec3f("i_color", glm::vec3(0.75f, 0.3f, 0.3f));
-    ball_shader.SetVec3f("light_pos", glm::vec3(0.0f, 10.0f, -1.0f));
-
+      ball_model.Draw(ball_shader);
+    /* } */
     // glad_glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    ball_model.Draw(ball_shader);
 
     // Draw line */
     line_shader.Use();

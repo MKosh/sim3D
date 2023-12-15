@@ -1,5 +1,7 @@
 #include "Model.h"
 // #include <glad/glad.h>
+#include "Shader/VertexArray.h"
+#include "Shader/VertexBuffer.h"
 #include "stb_image.h"
 #include <assimp/material.h>
 #include <cstdint>
@@ -162,4 +164,26 @@ auto TextureFromFile(const char* path, const std::string& directory) -> uint32_t
   }
 
   return textureID;
+}
+
+auto Model::SetPropertyDivisor(uint32_t index, uint32_t divisor) const -> void {
+  for (const auto& mesh : m_meshes) {
+    mesh.SetDivisor(index, divisor);
+  }
+}
+
+auto Model::AddProperty(const sim3D::VertexBuffer& vbo, const sim3D::VertexBufferLayout& layout, const uint32_t index) const -> void {
+  for (const auto& mesh : m_meshes) {
+    mesh.AddVBO(vbo, layout, index);
+  }
+}
+
+auto Model::SetInstances(uint32_t instances) -> void {
+  for (auto& mesh : m_meshes) {
+    mesh.SetInstances(instances);
+  }
+}
+
+auto Model::BindVAO() -> void {
+  m_meshes[0].BindVAO();
 }

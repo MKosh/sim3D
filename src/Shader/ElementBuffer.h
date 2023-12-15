@@ -4,16 +4,16 @@
 #include <vector>
 #include <glad/gl.h>
 #include <concepts>
-#include "VertexBufferObject.h"
+#include "VertexBuffer.h"
 #include <iostream>
 
 namespace sim3D {
 
-class ElementBufferObject {
+class ElementBuffer {
 public:
   uint32_t m_ID;
 
-  ElementBufferObject() {
+  ElementBuffer() {
     glad_glGenBuffers(1, &m_ID);
   };
 

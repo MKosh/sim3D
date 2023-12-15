@@ -6,7 +6,7 @@
 #include <vector>
 #include <glad/gl.h>
 #include <concepts>
-#include "Shader/VertexBufferObject.h"
+#include "Shader/VertexBuffer.h"
 #include <iostream>
 
 namespace sim3D {
@@ -53,22 +53,19 @@ private:
   uint32_t m_stride;
 };
 
-class VertexArrayObject {
+class VertexArray {
 public:
   uint32_t m_ID;
 
-  VertexArrayObject() {
+  VertexArray() {
     glad_glGenVertexArrays(1, &m_ID);
   };
 
-  // auto Generate() -> void {
-  // }
-
-  auto Bind() -> void {
+  auto Bind() const -> void {
     glad_glBindVertexArray(m_ID);
   }
 
-  auto Unbind() -> void {
+  auto Unbind() const -> void {
     glad_glBindVertexArray(0);
   }
 
@@ -76,15 +73,32 @@ public:
     glad_glDeleteVertexArrays(1, &m_ID);
   }
 
-  auto LinkVBO(const VertexBufferObject& VBO, const VertexBufferLayout& layout) const -> void {
-    VBO.Bind();
+  auto SetDivisor(uint32_t index, uint32_t divisor) const -> void {
+    Bind();
+    glad_glVertexAttribDivisor(index, divisor);
+  }
 
+  auto LinkVBO(const VertexBuffer& VBO, const VertexBufferLayout& layout, uint32_t index = 0) const -> void {
+    VBO.Bind();
+    std::cout << "\n --- VBO ID: " << VBO.GetID() << '\n';
     const auto& elements = layout.GetElements();
     uint64_t offset = 0;
     for (uint32_t i = 0; i < elements.size(); ++i) {
       const auto& element = elements[i];
-      glad_glVertexAttribPointer(i, element.count, element.type, GL_FALSE, layout.GetStride(), (const void*)offset);
-      glad_glEnableVertexAttribArray(i);
+      uint32_t ii = i + index;
+      std::cout << "----------------------------" << '\n';
+      std::cout << "index       : " << index << '\n'
+                << "i           : " << i << '\n'
+                << "ii          : " << ii << '\n'
+                << "count       : " << element.count << '\n'
+                << "type        : " << element.type << '\n'
+                << "stride      : " << layout.GetStride() << '\n'
+                << "offset      : " << offset << '\n';
+  std::cout << "debug 1: " << glGetError() << std::endl;
+      glad_glVertexAttribPointer(ii, element.count, element.type, GL_FALSE, layout.GetStride(), (const void*)offset);
+  std::cout << "debug 2: " << glGetError() << std::endl;
+      glad_glEnableVertexAttribArray(ii);
+  std::cout << "debug 3: " << glGetError() << std::endl;
       offset += element.count * VertexBufferElement::GetSizeOfType(element.type);
     }
     VBO.Unbind();

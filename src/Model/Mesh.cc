@@ -4,10 +4,6 @@
 #include <vector>
 
 
-// Mesh::Mesh(std::vector<Vertex>vertices, std::vector<uint32_t> indicies, std::vector<Texture> textures, uint32_t instances = 1) :
-//            m_vertices{vertices}, m_indicies{indicies}, m_textures{textures}, m_instances{instances} {
-//   SetupMesh();
-// }
 Mesh::Mesh(std::vector<Vertex>vertices, std::vector<uint32_t> indicies, std::vector<Texture> textures) :
            m_vertices{vertices}, m_indicies{indicies}, m_textures{textures}{
   SetupMesh();
@@ -19,38 +15,12 @@ auto Mesh::SetupMesh() -> void {
   m_vbo.SetData(m_vertices);
   m_ebo.SetData(m_indicies);
   sim3D::VertexBufferLayout layout;
-  layout.Push<float>(3);
-  layout.Push<float>(3);
-  layout.Push<float>(2);
+  layout.Push<float>(3); // Position
+  layout.Push<float>(3); // Normal
+  layout.Push<float>(2); // Texture
 
   m_vao.LinkVBO(m_vbo, layout);
   m_vao.Unbind();
-
-// glad_glGenVertexArrays(1, &m_vao);
-  // glad_glGenBuffers(1, &m_vbo);
-  // glad_glGenBuffers(1, &m_ebo);
-  //
-  // glad_glBindVertexArray(m_vao);
-  //
-  // glad_glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-  // glad_glBufferData(GL_ARRAY_BUFFER, m_vertices.size()*sizeof(Vertex), &m_vertices[0], GL_STATIC_DRAW);
-  //
-  // glad_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);
-  // glad_glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indicies.size() * sizeof(uint32_t), &m_indicies[0], GL_STATIC_DRAW);
-  //
-  // // Vertex positions
-  // glad_glEnableVertexAttribArray(0);
-  // glad_glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
-  //
-  // // Vertex normals
-  // glad_glEnableVertexAttribArray(1);
-  // glad_glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
-  //
-  // // Vertex texture coords
-  // glad_glEnableVertexAttribArray(2);
-  // glad_glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, tex_coords));
-  //
-  // glad_glBindVertexArray(0);
 }
 
 auto Mesh::Draw(Shader& shader) -> void {
@@ -78,10 +48,33 @@ auto Mesh::Draw(Shader& shader) -> void {
   }
 
   // Draw mesh
-  // m_ebo.Bind();
-  m_vao.Bind();
-  glad_glDrawElements(GL_TRIANGLES, m_indicies.size(), GL_UNSIGNED_INT, 0);
-  m_vao.Unbind();
+  if (m_instances == 1) {
+    m_vao.Bind();
+    glad_glDrawElements(GL_TRIANGLES, m_indicies.size(), GL_UNSIGNED_INT, 0);
+    m_vao.Unbind();
+  } else if (m_instances > 1) {
+    m_vao.Bind();
+    glad_glDrawElementsInstanced(GL_TRIANGLES, m_indicies.size(), GL_UNSIGNED_INT, 0, m_instances);
+    m_vao.Unbind();
+  } else {
+    std::cout << "ERROR: incorrect number of instances, cannot draw mesh: " << m_instances << " instances requested\n";
+  }
   
   glad_glActiveTexture(GL_TEXTURE0);
+}
+
+auto Mesh::SetDivisor(uint32_t index, uint32_t divisor) const -> void {
+  m_vao.SetDivisor(index, divisor);
+}
+
+
+auto Mesh::AddVBO(const sim3D::VertexBuffer& vbo, const sim3D::VertexBufferLayout& layout, const uint32_t index) const -> void {
+  m_vao.Bind();
+  m_vao.LinkVBO(vbo, layout, index);
+  std::cout << m_instances << " instances requested\n";
+  m_vao.Unbind();
+}
+
+auto Mesh::BindVAO() -> void {
+  m_vao.Bind();
 }
