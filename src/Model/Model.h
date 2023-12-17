@@ -1,8 +1,11 @@
 #pragma once
 
+#include "Shader/ElementBuffer.h"
 #include "Shader/Shader.h"
 #include "Mesh.h"
+#include "Shader/VertexBuffer.h"
 
+#include <cstdint>
 #include <vector>
 #include <string>
 
@@ -14,6 +17,10 @@ class Model {
 public:
   Model(const std::string& path);
   auto Draw(Shader& shader) -> void;
+  auto AddProperty(const sim3D::VertexBuffer& vbo, const sim3D::VertexBufferLayout& layout, const uint32_t index = 0) const -> void;
+  auto SetPropertyDivisor(uint32_t index, uint32_t divisor) const -> void;
+  auto SetInstances(uint32_t intstances) -> void;
+  auto BindVAO() -> void;
 
 private:
   std::vector<Mesh> m_meshes;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cassert>
+#include <cstddef>
 #include <cstdint>
 #include <vector>
 #include <glad/gl.h>
@@ -30,6 +31,13 @@ public:
     glad_glBufferData(GL_ARRAY_BUFFER, data.size()*32, data.data(), GL_STATIC_DRAW);
   }
 
+  template<typename T>
+  requires container<T>
+  auto SetData(const T& data, std::size_t size) {
+    glad_glBindBuffer(GL_ARRAY_BUFFER, m_ID);
+    glad_glBufferData(GL_ARRAY_BUFFER, data.size()*size, data.data(), GL_STATIC_DRAW);
+  }
+
   auto Bind() const -> void {
     glad_glBindBuffer(GL_ARRAY_BUFFER, m_ID);
   }
@@ -42,6 +50,7 @@ public:
     glad_glDeleteBuffers(1, &m_ID);
   }
 
+  auto GetID() const -> uint32_t { return m_ID; }
 
 private:
   

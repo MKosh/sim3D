@@ -78,14 +78,23 @@ public:
     glad_glVertexAttribDivisor(index, divisor);
   }
 
-  auto LinkVBO(const VertexBuffer& VBO, const VertexBufferLayout& layout) const -> void {
+  auto LinkVBO(const VertexBuffer& VBO, const VertexBufferLayout& layout, uint32_t index = 0) const -> void {
     VBO.Bind();
     const auto& elements = layout.GetElements();
     uint64_t offset = 0;
     for (uint32_t i = 0; i < elements.size(); ++i) {
       const auto& element = elements[i];
-      glad_glVertexAttribPointer(i, element.count, element.type, GL_FALSE, layout.GetStride(), (const void*)offset);
-      glad_glEnableVertexAttribArray(i);
+      uint32_t ii = i + index;
+      // std::cout << "----------------------------" << '\n';
+      // std::cout << "index       : " << index << '\n'
+      //           << "i           : " << i << '\n'
+      //           << "ii          : " << ii << '\n'
+      //           << "count       : " << element.count << '\n'
+      //           << "type        : " << element.type << '\n'
+      //           << "stride      : " << layout.GetStride() << '\n'
+      //           << "offset      : " << offset << '\n';
+      glad_glVertexAttribPointer(ii, element.count, element.type, GL_FALSE, layout.GetStride(), (const void*)offset);
+      glad_glEnableVertexAttribArray(ii);
       offset += element.count * VertexBufferElement::GetSizeOfType(element.type);
     }
     VBO.Unbind();
