@@ -4,7 +4,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <vector>
-#include <glad/gl.h>
+#include <glad/glad.h>
 #include <concepts>
 #include <iostream>
 
@@ -51,6 +51,7 @@ public:
   }
 
   auto GetID() const -> uint32_t { return m_ID; }
+
 
 private:
   

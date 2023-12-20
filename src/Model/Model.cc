@@ -1,5 +1,5 @@
 #include "Model.h"
-// #include <glad/glad.h>
+#include <glad/glad.h>
 #include "Shader/VertexArray.h"
 #include "Shader/VertexBuffer.h"
 #include "stb_image.h"

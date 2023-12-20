@@ -1,12 +1,12 @@
 #include "App.h"
-#include <array>
+#include <cstddef>
+#include <cstdlib>
 #include <glm/ext/matrix_clip_space.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "Shader/Shader.h"
 #include "Model/Model.h"
-#include "Model/Mesh.h"
 #include "Model/Box.h"
 #include "Shader/VertexBuffer.h"
 
@@ -19,6 +19,11 @@
 
 namespace sim3D {
 
+void GLAPIENTRY DebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity,
+                              GLsizei length, const GLchar* message, const void* userParam) {
+  std::cout << "OpenGL ERROR: " << "\n\t" << message << std::endl;
+}
+
 auto App::GetInstance() -> App* {
   if (app == nullptr) {
     app = new App();
@@ -27,7 +32,7 @@ auto App::GetInstance() -> App* {
 }
 
 auto App::InitGLAD() -> void {
-  int version = gladLoadGL(glfwGetProcAddress);
+  int version = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
   if (!version) {
     std::cerr << "Failed to initialize GLAD\n";
     throw std::runtime_error("ERROR::App Failed to initialize GLAD");
@@ -52,6 +57,10 @@ auto App::run() -> void {
 
   // glGetError();
   glad_glEnable(GL_DEPTH_TEST);
+  glad_glEnable(GL_CULL_FACE);
+  glad_glEnable(GL_DEBUG_OUTPUT);
+  glad_glDebugMessageCallback(sim3D::DebugCallback, 0);
+  std::cout << "OpenGL version: " << glad_glGetString(GL_VERSION) << '\n';
   Shader ball_shader{"resources/shaders/ball.vert", "resources/shaders/ball.frag"};
   Shader line_shader{"resources/shaders/line.vert", "resources/shaders/line.frag"};
 
@@ -62,15 +71,21 @@ auto App::run() -> void {
   float box_depth = 1.0f;
   float ball_radius = 0.5f;
 
-  std::vector<glm::mat4> ball_models{glm::mat4(1.0f), glm::mat4(1.0f), glm::mat4(1.0f)};
-  /* glm::mat4 inst_model = glm::mat4(1.0f); */
-  ball_models[0] = glm::translate(ball_models[0], glm::vec3(0.0f, 0.0f, 1.0f));
-  ball_models[1] = glm::translate(ball_models[1], glm::vec3(1.0f, 0.0f, 1.0f));
-  ball_models[2] = glm::translate(ball_models[2], glm::vec3(-1.0f, 1.0f, 1.0f));
-  ball_model.SetInstances(3);
+  // std::vector<glm::mat4> ball_models{glm::mat4(1.0f), glm::mat4(1.0f), glm::mat4(1.0f)};
+  // ball_models[0] = glm::translate(ball_models[0], glm::vec3(0.0f, 0.0f, 1.0f));
+  // ball_models[1] = glm::translate(ball_models[1], glm::vec3(1.0f, 0.0f, 1.0f));
+  // ball_models[2] = glm::translate(ball_models[2], glm::vec3(-1.0f, 1.0f, 1.0f));
+  std::vector<glm::mat4> ball_models;
+  std::srand(0);
+  for (std::size_t i = 0; i < 3000; i++) {
+    ball_models.emplace_back(glm::mat4(1.0f));
+    float r1 = ((float) rand() / (RAND_MAX)) * 8 - 4;
+    float r2 = ((float) rand() / (RAND_MAX)) * 8 - 4;
+    float r3 = ((float) rand() / (RAND_MAX)) * 8 - 4;
+    ball_models[i] = glm::translate(ball_models[i], glm::vec3(r1, r2, r3));
+  }
+  ball_model.SetInstances(3000);
 
-
-  /* ball_model.BindVAO(); */
   VertexBuffer positions;
   positions.SetData(ball_models, sizeof(glm::mat4));
 
@@ -110,17 +125,14 @@ auto App::run() -> void {
     ball_shader.Use();
 
     model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(0.0f, 0.0f, 1.0f));
+    // model = glm::translate(model, glm::vec3(0.0f, 0.0f, 1.0f));
     model = glm::scale(model, glm::vec3(ball_radius, ball_radius, ball_radius));
-    /* for (size_t i = 0; i < 2; ++i) { */
-      pvm = projection * view; // * ball_models[i];
-      ball_shader.SetMat4("pvm", pvm);
-      ball_shader.SetVec3f("i_color", glm::vec3(0.75f, 0.3f, 0.3f));
-      ball_shader.SetVec3f("light_pos", glm::vec3(0.0f, 10.0f, -1.0f));
+    pvm = projection * view;
+    ball_shader.SetMat4("pvm", pvm);
+    ball_shader.SetVec3f("i_color", glm::vec3(0.75f, 0.3f, 0.3f));
+    ball_shader.SetVec3f("light_pos", glm::vec3(0.0f, 10.0f, -1.0f));
 
-      ball_model.Draw(ball_shader);
-    /* } */
-    // glad_glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    ball_model.Draw(ball_shader);
 
     // Draw line */
     line_shader.Use();
@@ -152,7 +164,6 @@ auto App::run() -> void {
   ImGui::DestroyContext();
 
   glfwTerminate();
-  gladLoaderUnloadGL();
 }
 
 /* auto App::Shutdown() -> void { */

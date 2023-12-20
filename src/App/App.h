@@ -1,6 +1,6 @@
 #pragma once
 
-#include <glad/gl.h>
+#include <glad/glad.h>
 #include "Window.h"
 #include "../Camera/Camera.h"
 #include "../Input/InputHandler.h"
@@ -13,6 +13,8 @@
 
 namespace sim3D {
 
+void GLAPIENTRY DebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity,
+                              GLsizei length, const GLchar* message, const void* userParam);
 
 class App {
 protected:

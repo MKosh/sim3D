@@ -15,8 +15,9 @@ Window::~Window() {
 
 auto Window::InitWindow() -> void {
   glfwInit();
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
+  glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, 1);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
   m_window = glfwCreateWindow(m_width, m_height, m_name.c_str(), nullptr, nullptr);

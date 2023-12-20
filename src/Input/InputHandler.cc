@@ -1,4 +1,4 @@
-#include <glad/gl.h>
+#include <glad/glad.h>
 #include "InputHandler.h"
 #include "../Camera/Camera.h"
 #include "../App/App.h"

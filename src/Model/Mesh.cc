@@ -71,7 +71,7 @@ auto Mesh::SetDivisor(uint32_t index, uint32_t divisor) const -> void {
 auto Mesh::AddVBO(const sim3D::VertexBuffer& vbo, const sim3D::VertexBufferLayout& layout, const uint32_t index) const -> void {
   m_vao.Bind();
   m_vao.LinkVBO(vbo, layout, index);
-  std::cout << m_instances << " instances requested\n";
+  /* std::cout << m_instances << " instances requested\n"; */
   m_vao.Unbind();
 }
 

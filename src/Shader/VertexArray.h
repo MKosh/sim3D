@@ -4,7 +4,7 @@
 #include <memory>
 #include <sys/types.h>
 #include <vector>
-#include <glad/gl.h>
+#include <glad/glad.h>
 #include <concepts>
 #include "Shader/VertexBuffer.h"
 #include <iostream>
@@ -85,14 +85,14 @@ public:
     for (uint32_t i = 0; i < elements.size(); ++i) {
       const auto& element = elements[i];
       uint32_t ii = i + index;
-      // std::cout << "----------------------------" << '\n';
-      // std::cout << "index       : " << index << '\n'
-      //           << "i           : " << i << '\n'
-      //           << "ii          : " << ii << '\n'
-      //           << "count       : " << element.count << '\n'
-      //           << "type        : " << element.type << '\n'
-      //           << "stride      : " << layout.GetStride() << '\n'
-      //           << "offset      : " << offset << '\n';
+      /* std::cout << "----------------------------" << '\n'; */
+      /* std::cout << "index       : " << index << '\n' */
+      /*           << "i           : " << i << '\n' */
+      /*           << "ii          : " << ii << '\n' */
+      /*           << "count       : " << element.count << '\n' */
+      /*           << "type        : " << element.type << '\n' */
+      /*           << "stride      : " << layout.GetStride() << '\n' */
+      /*           << "offset      : " << offset << '\n'; */
       glad_glVertexAttribPointer(ii, element.count, element.type, GL_FALSE, layout.GetStride(), (const void*)offset);
       glad_glEnableVertexAttribArray(ii);
       offset += element.count * VertexBufferElement::GetSizeOfType(element.type);

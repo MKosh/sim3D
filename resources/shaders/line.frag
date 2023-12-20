@@ -1,4 +1,4 @@
-#version 410 core
+#version 450 core
 
 uniform vec3 line_color;
 out vec4 FragColor;

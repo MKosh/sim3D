@@ -2,7 +2,7 @@
 
 #include <cstdint>
 #include <vector>
-#include <glad/gl.h>
+#include <glad/glad.h>
 #include <concepts>
 #include "VertexBuffer.h"
 #include <iostream>

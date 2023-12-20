@@ -1,7 +1,7 @@
 #define GLFW_INCLUDE_NONE
 #include <cstdlib>
 #include <exception>
-#include <glad/gl.h>
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 #include <glm/glm.hpp>
