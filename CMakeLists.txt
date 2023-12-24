@@ -6,10 +6,10 @@ set(CMAKE_CXX_STANDARD 20)
 project(sim3D LANGUAGES C CXX)
 add_executable(simulation src/main.cc)
 
-find_package(glfw3 REQUIRED)
-find_package(assimp REQUIRED)
+# find_package(glfw3 REQUIRED)
+# find_package(assimp REQUIRED)
 find_package(OpenGL REQUIRED)
-find_package(spdlog REQUIRED)
+# find_package(spdlog REQUIRED)
 
 add_subdirectory(external)
 
