@@ -20,12 +20,10 @@
 
 namespace sim3D {
 
-  // #if OPENGL_VERSION_MINOR > 3
-    void GLAPIENTRY DebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity,
-                                  GLsizei length, const GLchar* message, const void* userParam) {
-      std::cout << "OpenGL ERROR: " << "\n\t" << message << std::endl;
-    }
-  // #endif
+void GLAPIENTRY DebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity,
+                              GLsizei length, const GLchar* message, const void* userParam) {
+  std::cout << "OpenGL ERROR: " << "\n\t" << message << std::endl;
+}
 
 auto App::GetInstance() -> App* {
   if (app == nullptr) {
@@ -65,22 +63,12 @@ auto App::run() -> void {
   ImGuiIO& io = ImGui::GetIO();
   io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
-  // ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
-  // dockspace_flags &= ImGuiDockNodeFlags_PassthruCentralNode;
 
-  // ImGuiWindowFlags window_flags = 0;
-  // window_flags | ImGuiWindowFlags_NoBackground;
-
-  // ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
-
-  //////////////////////////////////////////////////////////////////////////////
   glad_glEnable(GL_DEPTH_TEST);
   glad_glEnable(GL_CULL_FACE);
   glad_glEnable(GL_POLYGON_SMOOTH);
-  // #if OPENGL_VERSION_MINOR > 3
-    glad_glEnable(GL_DEBUG_OUTPUT);
-    glad_glDebugMessageCallback(sim3D::DebugCallback, 0);
-  // #endif
+  glad_glEnable(GL_DEBUG_OUTPUT);
+  glad_glDebugMessageCallback(sim3D::DebugCallback, 0);
 
   std::cout << "OpenGL version: " << glad_glGetString(GL_VERSION) << '\n';
   Shader ball_shader{"data/shaders/ball.vert", "data/shaders/ball.frag"};

@@ -20,7 +20,7 @@ auto Window::InitWindow() -> void {
     std::cout << "Using debug context from window\n";
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, 1);
   // #endif
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, OPENGL_VERSION_MINOR);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
   m_window = glfwCreateWindow(m_width, m_height, m_name.c_str(), nullptr, nullptr);
