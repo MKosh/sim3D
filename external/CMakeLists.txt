@@ -1,2 +1,2 @@
-add_library(glad SHARED src/glad.c)
-target_include_directories(glad PRIVATE include/)
+add_subdirectory(glad)
+add_subdirectory(imgui)
