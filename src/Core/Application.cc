@@ -12,8 +12,8 @@
 #include "Renderer/VertexBuffer.h"
 
 #include "imgui/imgui.h"
-#include "imgui/backends/imgui_impl_glfw.h"
-#include "imgui/backends/imgui_impl_opengl3.h"
+#include "imgui/imgui_impl_glfw.h"
+#include "imgui/imgui_impl_opengl3.h"
 
 #include <GLFW/glfw3.h>
 
@@ -68,14 +68,15 @@ auto App::run() -> void {
   glad_glEnable(GL_CULL_FACE);
   glad_glEnable(GL_POLYGON_SMOOTH);
   glad_glEnable(GL_DEBUG_OUTPUT);
+	// glShadeModel(GL_SMOOTH);// Enables Smooth Shading
   glad_glDebugMessageCallback(sim3D::DebugCallback, 0);
 
   std::cout << "OpenGL version: " << glad_glGetString(GL_VERSION) << '\n';
   Shader ball_shader{"data/shaders/ball.vert", "data/shaders/ball.frag"};
   Shader line_shader{"data/shaders/line.vert", "data/shaders/line.frag"};
 
-  // Model ball_model("data/models/sphere/ico_2.obj");
-  Model ball_model("data/models/sphere/5seg_5ring.obj");
+  Model ball_model("data/models/sphere/ico_3.obj");
+  // Model ball_model("data/models/sphere/5seg_5ring.obj");
   Box box{};
   float box_width = 1.0f;
   float box_height = 1.0f;
@@ -84,14 +85,14 @@ auto App::run() -> void {
 
   std::vector<glm::mat4> ball_models;
   std::srand(0);
-  std::size_t instances = 1;
+  std::size_t instances = 100;
   for (std::size_t i = 0; i < instances; i++) {
     ball_models.emplace_back(glm::mat4(1.0f));
     float r1 = ((float) rand() / (RAND_MAX)) * 8 - 4;
     float r2 = ((float) rand() / (RAND_MAX)) * 8 - 4;
     float r3 = ((float) rand() / (RAND_MAX)) * 8 - 4;
     ball_models[i] = glm::translate(ball_models[i], glm::vec3(r1, r2, r3));
-    ball_models[i] = glm::translate(ball_models[i], glm::vec3(0.0, 0.0, 10.0));
+    // ball_models[i] = glm::translate(ball_models[i], glm::vec3(0.0, 0.0, 10.0));
     ball_models[i] = glm::scale(ball_models[i], glm::vec3(0.1, 0.1, 0.1));
   }
   ball_model.SetInstances(instances);

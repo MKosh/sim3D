@@ -1,5 +1,5 @@
 #include "Box.h"
-#include <glad/glad.h>
+#include <glad/gl.h>
 
 auto Box::SetupBox() -> void {
   m_vertices = {
