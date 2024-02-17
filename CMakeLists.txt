@@ -9,7 +9,7 @@ include(FetchContent)
 #-------------------------------------------------------------------------------
 # Setup project and executable
 project(sim3D LANGUAGES C CXX)
-add_executable(simulation src/main.cc)
+add_executable(sim3D src/main.cc)
 
 #-------------------------------------------------------------------------------
 # Confirm OpenGL is available
@@ -34,13 +34,22 @@ add_subdirectory(src/Core)
 add_library(renderer STATIC)
 add_subdirectory(src/Renderer)
 
+
+#-------------------------------------------------------------------------------
+# Add utility library
+add_subdirectory(src/Utils)
+
+#-------------------------------------------------------------------------------
+# Add Simulation library
+add_subdirectory(src/Simulation)
+
 #-------------------------------------------------------------------------------
 # Determine the system and build appropriately
 message(STATUS "Building for system: ${CMAKE_SYSTEM_NAME}")
 
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
 
-  target_include_directories(simulation PUBLIC 
+  target_include_directories(sim3D PUBLIC 
     external
     external/glad
     external/imgui
@@ -62,6 +71,8 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     assimp
     glad
     renderer
+    utils
+    simulation
     spdlog::spdlog
   )
 
@@ -82,7 +93,7 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
   message(STATUS "Building for windows on windows")
 
-  target_include_directories(simulation PUBLIC 
+  target_include_directories(sim3D PUBLIC 
     external/include
     external
   )
@@ -100,6 +111,8 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     assimp
     glad
     spdlog::spdlog
+    utils
+    simulation
   )
 
   target_include_directories(renderer PUBLIC 
@@ -117,15 +130,15 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     spdlog::spdlog
   )
 
-  add_custom_command(TARGET simulation POST_BUILD
+  add_custom_command(TARGET sim3D POST_BUILD
                     COMMAND ${CMAKE_COMMAND} -E copy
                     ${CMAKE_BINARY_DIR}/external/assimp/bin/libassimp-5.dll ${CMAKE_BINARY_DIR})
 
-  add_custom_command(TARGET simulation POST_BUILD
+  add_custom_command(TARGET sim3D POST_BUILD
                     COMMAND ${CMAKE_COMMAND} -E copy
                     ${CMAKE_BINARY_DIR}/external/glfw/src/glfw3.dll ${CMAKE_BINARY_DIR})
 
-  add_custom_command(TARGET simulation POST_BUILD
+  add_custom_command(TARGET sim3D POST_BUILD
                     COMMAND ${CMAKE_COMMAND} -E copy_directory
                     ${CMAKE_SOURCE_DIR}/data ${CMAKE_BINARY_DIR}/data)
 
@@ -133,23 +146,25 @@ endif()
 
 #-------------------------------------------------------------------------------
 # Link required libraries for the main executable
-target_link_libraries(simulation PRIVATE 
+target_link_libraries(sim3D PRIVATE 
   glfw 
   assimp 
   imgui 
   glad 
   core 
   renderer 
+  utils
+  simulation
   spdlog::spdlog
 )
 
 
 message(STATUS "Cmake binary dir: ${CMAKE_BINARY_DIR}")
 message(STATUS "Project binary dir: ${PROJECT_BINARY_DIR}")
-set(DEBUG_OPTIONS "-Wall;-Wextra;-Wpedantic;-Werror;-g")
+set(DEBUG_OPTIONS "-Wall;-Wextra;-Wpedantic;-g;-DMYDEBUG") #-Werror;
 set(RELEASE_OPTIONS "-Wall;-Wextra;-Wpedantic;-O3")
-target_compile_options(simulation PRIVATE "$<$<CONFIG:DEBUG>:${DEBUG_OPTIONS}>")
-target_compile_options(simulation PRIVATE "$<$<CONFIG:RELEASE>:${RELEASE_OPTIONS}>")
+target_compile_options(sim3D PRIVATE "$<$<CONFIG:DEBUG>:${DEBUG_OPTIONS}>")
+target_compile_options(sim3D PRIVATE "$<$<CONFIG:RELEASE>:${RELEASE_OPTIONS}>")
 
 find_library(myglfwlib glfw
   NAMES
