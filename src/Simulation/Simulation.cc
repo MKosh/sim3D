@@ -1,5 +1,9 @@
 #include "Simulation.h"
+// #include "Simulation/Entity.h"
 #include "glad/gl.h"
+#include <glm/ext/matrix_transform.hpp>
+#include <glm/fwd.hpp>
+#include <iterator>
 
 namespace sim3D {
 
@@ -15,11 +19,11 @@ auto Simulation::SetDeltaTime(float dt) -> void {
   m_dt = dt;
 }
 
-Simulation::World::World() : m_x{1}, m_y{1}, m_z{1} {
+World::World() : m_x{1}, m_y{1}, m_z{1} {
     SetupWorld();
 }
 
-auto Simulation::World::SetupWorld() -> void {
+auto World::SetupWorld() -> void {
   m_vertices = {
     // Back Top
     -0.5,  0.5,  0.5,
@@ -73,7 +77,7 @@ auto Simulation::World::SetupWorld() -> void {
   glad_glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-auto Simulation::World::Draw(const glm::mat4& pv_matrix) -> void {
+auto World::Draw(const glm::mat4& pv_matrix) -> void {
   m_line_shader.Use();
   m_model = glm::scale(m_model, glm::vec3{m_x, m_y, m_z});
   m_line_shader.SetVec3f("line_color", glm::vec3{1.0, 1.0, 1.0});
@@ -85,6 +89,17 @@ auto Simulation::World::Draw(const glm::mat4& pv_matrix) -> void {
 
 auto Simulation::Draw(const glm::mat4& pv_matrix) -> void {
   m_world.Draw(pv_matrix);
+}
+
+auto World::SetupScene() -> void {
+  s_component_counter = 0;
+  std::size_t instances = 1;
+  for (size_t i = 0; i < instances; ++i) {
+    EntityID e = scene.NewEntity();
+    auto transform = scene.Assign<Transform>(e);
+    transform->transform = glm::translate(transform->transform, glm::vec3(1.0, 0.0, 0.0));
+    transform->transform = glm::scale(transform->transform, glm::vec3(0.1,0.1,0.1));
+  }
 }
 
 }

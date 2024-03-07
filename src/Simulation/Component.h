@@ -19,7 +19,7 @@ template<typename T>
 class ComponentArray : public IComponentArray {
 public:
   auto InsertData(Entity entity, T component) -> void {
-    assert(m_entity_index.find(entity) == m_entity_to_index.end() && "Component added to same entity more than once");
+    assert(m_entity_to_index.find(entity) == m_entity_to_index.end() && "Component added to same entity more than once");
     
     // Put the new entry at the end and update the maps
     size_t new_index = m_size;
